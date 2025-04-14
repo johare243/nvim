@@ -28,7 +28,8 @@ return {
             ensure_installed = {
                 "lua_ls",
                 "ts_ls",
-		"pyright",
+                "pyright",
+                "apex_ls",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
