@@ -52,6 +52,19 @@ return {
                         }
                     }
                 end,
+                ["apex_ls"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.apex_ls.setup {
+                        cmd = {
+                            "java",
+                            "-jar",
+                            "/home/johar/code/projects/apex-jorje-lsp.jar"
+                        },
+                        filetypes = {"apex"},
+                        root_dir = lspconfig.util.root_pattern("sfdx-project.json", ".git"),
+                        single_file_support = true,
+                    }
+                end,
             }
         })
 
@@ -66,7 +79,7 @@ return {
             mapping = cmp.mapping.preset.insert({
                 ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
                 ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-                ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+                ['<C-l>'] = cmp.mapping.confirm({ select = true }),
                 ["<C-Space>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
