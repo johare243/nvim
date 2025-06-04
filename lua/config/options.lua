@@ -3,6 +3,7 @@
 local o = vim.opt
 
 o.number         = true        -- show absolute line number
+o.ignorecase      = true        -- ignore case in search patterns
 o.relativenumber = true        -- show relative line numbers
 o.termguicolors  = true        -- enable 24-bit colors
 

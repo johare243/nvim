@@ -1,6 +1,3 @@
--- init.lua
-
--- 1) Set leaders up front
 vim.g.mapleader      = " "
 vim.g.maplocalleader = " "
 

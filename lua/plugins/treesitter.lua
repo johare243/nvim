@@ -5,7 +5,7 @@ return {
     build  = ":TSUpdate",
     lazy = "true",
     opts   = {
-      ensure_installed = {"lua", "bash", "python", "javascript", "typescript" },
+      ensure_installed = {"prisma", "lua", "bash", "python", "javascript", "typescript" },
       highlight        = { enable = true },
     },
     config = function(_, opts)

@@ -3,6 +3,33 @@
 local km = vim.keymap.set
 local opts = { noremap = true, silent = true }
 
+local function close_or_quit()
+  local listed = vim.fn.getbufinfo({ buflisted = 1 })
+  if #listed <= 1 then
+    vim.cmd("qa") -- or ":q" if you only want to close the current tab
+  else
+    vim.cmd("bd!")
+  end
+end
+
+local function quit_all()
+  local listed = vim.fn.getbufinfo({ buflisted = 1 })
+    vim.cmd("qall!")
+end
+
+local function write_close_or_quit()
+  local listed = vim.fn.getbufinfo({ buflisted = 1 })
+  if #listed <= 1 then
+    vim.cmd("wqa") -- or ":q" if you only want to close the current tab
+  else
+    vim.cmd("wbd!")
+  end
+end
+
+vim.keymap.set('n', '<C-@>', '<NOP>', opts)
+-- run tmux-sessionizer
+km("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+
 -- open the alternate (last) buffer in a vertical split
 vim.keymap.set('n', '<leader>\\', '<cmd>vsplit #<CR>', opts)
 -- open the alternate (last) buffer in a horizontal split
@@ -12,6 +39,11 @@ vim.keymap.set('n', '<leader>-', '<cmd>split #<CR>', opts)
 vim.keymap.set('n', '<leader>c', '<cmd>close<CR>', opts)
 -- Save file
 km("n", "<leader>w", ":w<CR>", opts)
+km("n", "<leader>W", write_close_or_quit, opts)
+
+-- Keep copied text when deleting
+-- (yy then dd a line, can still use p to paste yanked line)
+vim.keymap.set("x", "<leader>p", [["_dP]])
 
 -- Source file
 km("n", "<leader><leader>", ":so<CR>", opts)
@@ -21,8 +53,8 @@ km("n", "<leader>n", ":bnext<CR>", opts)
 km("n", "<leader>l", ":bprev<CR>", opts)
 
 -- Delete current buffer
-km("n", "<leader>q", ":bd<CR>", opts)
-km("n", "<leader>Q", ":bd!<CR>", opts)
+km("n", "<leader>q", ":bd<CR>:bprev<CR>", opts)
+km("n", "<leader>Q", close_or_quit, opts)
 km('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 km('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 km('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
@@ -37,7 +69,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-km("n", "<leader>to", ":NvimTreeToggle<CR>", opts)
+km("n", "<leader>e", ":NvimTreeToggle<CR>", opts)
 
 -- Move line below to end of current line
 km("n", "J", "mzJ`z")
@@ -65,3 +97,4 @@ km("n", "<leader>sh", "<cmd>Telescope help_tags<cr>", { desc = "[S]earch [H]elp"
 km("n", "<leader>sk", "<cmd>Telescope keymaps<cr>", { desc = "[S]earch [K]eymaps" })
 km("n", "<leader>sr", "<cmd>Telescope oldfiles<cr>", { desc = "[S]earch [R]ecent files" })
 km("n", "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Fuzzy search in buffer" })
+
