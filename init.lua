@@ -1,0 +1,5 @@
+require("config.options")
+require("config.remaps")
+require("config.filetypes")
+require("config.lazy")
+require("lualine").setup()
