@@ -23,7 +23,7 @@ return {
         lualine_b = { "branch", "diff", { "diagnostics", sources = { "nvim_diagnostic" } } },
         lualine_c = {
           "filename", {
-          "require'salesforce.org_manager':get_default_alias()",
+          "require'sf'.get_target_org()",
           path = 1,
           newfile_status = true,
           symbols = {
