@@ -18,8 +18,17 @@ m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 m("i", "jk", "<ESC>", { desc = "Escape" })
 m("n", "<leader><leader>", "<cmd>source %<cr>", { desc = "Source current file" })
 m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
-m("n", "<leader>qb", "<cmd>q<cr>", { desc = "Close Buffer" })
-m("n", "<leader>bq!", "<cmd>q<cr>", { desc = "Close Buffer" })
+m("n", "<leader>bq", function()
+  -- Check if there are multiple windows
+  local windows = vim.api.nvim_list_wins()
+  if #windows > 1 then
+    -- In a split: just close the window, keep buffer
+    vim.cmd('close')
+  else
+    -- Single window: delete the buffer
+    vim.cmd('bdelete!')
+  end
+end, { desc = "Smart Close Buffer" })
 m("n", "<leader>qa", "<cmd>qall!<cr>", { desc = "Force Quit All" })
 
 -- movement QoL
@@ -31,7 +40,6 @@ m("n", "<C-u>", "<C-u>zz", { desc = "Half page up (center)" })
 -- harpoon
 m("n", "<leader>h", "<cmd>harpoon.ui.toggle_quick_menu()<cr>", { desc = "Next Buffer" })
 
-
 -- window navigation (requested)
 m("n", "<C-h>", "<C-w>h", { desc = "Window left" })
 m("n", "<C-l>", "<C-w>l", { desc = "Window right" })
@@ -39,8 +47,7 @@ m("n", "<C-j>", "<C-w>j", { desc = "Window down" })
 m("n", "<C-k>", "<C-w>k", { desc = "Window up" })
 
 -- explorer (nvim-tree)
-m("n", "<leader>ee", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle File Explorer" })
-m("n", "<leader>ec", "<cmd>NvimTreeFindFileToggle<cr>", { desc = "Toggle Current File in File Explorer" })
+m("n", "<leader>e", "<cmd>NvimTreeFindFileToggle<cr>", { desc = "Toggle Current File in File Explorer" })
 
 -- telescope
 m("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
@@ -56,10 +63,39 @@ m("n", "<leader>bv", function()
 end, { desc = "Split Horizontal + Pick Buffer" })
 
 m("n", "<leader>bh", function()
-  vim.cmd('vsplit')
-  vim.cmd('Telescope buffers')
-end, { desc = "Split Vertical + Pick Buffer" })
+  -- Check if there's only one buffer (current buffer)
+  local buffers = vim.api.nvim_list_bufs()
+  local valid_buffers = {}
+  for _, buf in ipairs(buffers) do
+    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+      table.insert(valid_buffers, buf)
+    end
+  end
+  
+  if #valid_buffers <= 1 then
+    -- Use Telescope find_files with vertical split action
+    require('telescope.builtin').find_files({
+      attach_mappings = function(prompt_bufnr, map)
+        local actions = require('telescope.actions')
+        -- Override Enter to always open in vertical split
+        map('i', '<CR>', function()
+          actions.select_vertical(prompt_bufnr)
+        end)
+        return true
+      end,
+    })
+  else
+    -- Use Telescope buffers with vertical split action
+    require('telescope.builtin').buffers({
+      attach_mappings = function(prompt_bufnr, map)
+        local actions = require('telescope.actions')
+        -- Override Enter to always open in vertical split
+        map('i', '<CR>', function()
+          actions.select_vertical(prompt_bufnr)
+        end)
+        return true
+      end,
+    })
+  end
+end, { desc = "Pick File/Buffer for Vertical Split" })
 
--- close splits
-m("n", "<leader>so", "<C-w>o", { desc = "Close other splits (only keep current)" })
-m("n", "<leader>sx", "<cmd>close<cr>", { desc = "Close current split" })

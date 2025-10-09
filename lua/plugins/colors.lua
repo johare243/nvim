@@ -6,5 +6,11 @@ return {
   config = function()
     c.colorscheme("tokyonight")
   end,
-  opts = {},
+  opts = {
+    transparent = true,
+    styles = {
+      sidebars = "transparent",
+      floats = "transparent",
+    },
+  },
 }
