@@ -11,6 +11,7 @@ m({ "n", "v" }, "<leader>y", [["+y]])
 m("n", "<leader>Y", [["+Y]])
 m({ "n", "v" }, "<leader>d", [["_d]])
 m("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 
 -- basics
@@ -20,8 +21,14 @@ m("n", "<leader>qq", "<cmd>q<cr>", { desc = "Quit" })
 m("n", "<leader>qa", "<cmd>qall<cr>", { desc = "Quit All" })
 
 -- movement QoL
+m("n", "<leader>n", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+m("n", "<leader>p", "<<cmd>bprev<cr>", { desc = "Previous Buffer" })
 m("n", "<C-d>", "<C-d>zz", { desc = "Half page down (center)" })
 m("n", "<C-u>", "<C-u>zz", { desc = "Half page up (center)" })
+
+-- harpoon
+m("n", "<leader>h", "<cmd>harpoon.ui.toggle_quick_menu()<cr>", { desc = "Next Buffer" })
+
 
 -- window navigation (requested)
 m("n", "<C-h>", "<C-w>h", { desc = "Window left" })

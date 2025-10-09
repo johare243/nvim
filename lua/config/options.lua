@@ -3,6 +3,9 @@ local g          = vim.g
 g.mapleader      = " "
 g.maplocalleader = " "
 
+o.hlsearch = false
+o.incsearch = true
+
 o.number         = true  -- show absolute line number
 o.ignorecase     = true  -- ignore case in search patterns
 o.relativenumber = true  -- show relative line numbers
@@ -20,7 +23,7 @@ o.backup         = false -- disable backup files
 
 o.undofile       = true  -- enable persistent undo
 
-o.updatetime     = 300   -- faster completion
+o.updatetime     = 50   -- faster completion
 
 o.scrolloff      = 8     -- keep cursor 8 lines from screen edge
 
