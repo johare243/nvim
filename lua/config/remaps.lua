@@ -15,10 +15,11 @@ m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 
 -- basics
+m("i", "jk", "<ESC>", { desc = "Escape" })
 m("n", "<leader><leader>", "<cmd>source %<cr>", { desc = "Source current file" })
-m("n", "<leader>ww", "<cmd>w<cr>", { desc = "Save" })
-m("n", "<leader>qq", "<cmd>q<cr>", { desc = "Quit" })
-m("n", "<leader>qa", "<cmd>qall<cr>", { desc = "Quit All" })
+m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
+m("n", "<leader>qb", "<cmd>q<cr>", { desc = "Close Buffer" })
+m("n", "<leader>qa", "<cmd>qall!<cr>", { desc = "Force Quit All" })
 
 -- movement QoL
 m("n", "<leader>n", "<cmd>bnext<cr>", { desc = "Next Buffer" })

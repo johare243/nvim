@@ -2,6 +2,18 @@ return {
   {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile", "BufReadPost" },
+
+    -- ensure .cls/.trigger => apex BEFORE the first buffer opens
+    init = function()
+      vim.filetype.add({ extension = { cls = "apex", trigger = "apex" } })
+      vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+        pattern = { "*.cls", "*.trigger", "*.apex" },
+        callback = function()
+          if vim.bo.filetype == "" then vim.bo.filetype = "apex" end
+        end,
+      })
+    end,
+
     dependencies = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
@@ -14,73 +26,36 @@ return {
       "saadparwaiz1/cmp_luasnip",
       "j-hui/fidget.nvim",
     },
-    config = function()
-      -- Setup autocompletion
-      local cmp = require('cmp')
-      local cmp_lsp = require("cmp_nvim_lsp")
-      local capabilities = vim.lsp.protocol.make_client_capabilities()
-      capabilities = vim.tbl_deep_extend("force", capabilities, cmp_lsp.default_capabilities())
 
-      -- Setup fidget for LSP status
+    config = function()
+      -- mason / fidget
+      require("mason").setup()
+      require("mason-lspconfig").setup({ automatic_installation = true })
       require("fidget").setup({})
 
-      -- Define on_attach function first
-      local function on_attach(bufnr)
-        local opts = { buffer = bufnr, silent = true }
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-        vim.keynkp.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.bnf.rename, opts)
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-        vim.keymap.set("n", "<leader>f", vim.lsp.buf.format, opts)
-      end
+      --------------------------------------------------------------------------
+      -- nvim-cmp + LuaSnip
+      --------------------------------------------------------------------------
+      local cmp = require("cmp")
+      local cmp_lsp = require("cmp_nvim_lsp")
+      local caps = vim.tbl_deep_extend(
+        "force",
+        vim.lsp.protocol.make_client_capabilities(),
+        cmp_lsp.default_capabilities()
+      )
 
-      -- Setup filetype for Apex
-      vim.filetype.add({
-        extension = {
-          cls = "apex",
-          trigger = "apex"
-        }
-      })
+      -- load VSCode-format snippets
+      pcall(function()
+        require("luasnip.loaders.from_vscode").lazy_load({
+          paths = { vim.fn.stdpath("config") .. "/snippets" },
+        })
+      end)
 
-      -- Setup Mason
-      require("mason").setup()
-      require("mason-lspconfig").setup({
-        automatic_installation = true,
-      })
 
-      vim.lsp.config("lua_ls", {
-        settings = {
-          Lua = {
-            diagnostics = {
-              globals = { 'vim' },
-            }
-          }
-        }
-      })
-
-      -- Configure Apex LSP
-      vim.lsp.config("apex_ls", {
-        cmd = {
-          "java",
-          "-jar",
-          vim.fn.expand("~/.local/share/nvim/mason/packages/apex-language-server/extension/dist/apex-jorje-lsp.jar")
-        },
-        filetypes = { "apex" },
-        on_attach = on_attach,
-        capabilities = capabilities,
-        settings = {
-          apex = {
-            java = {
-              home = "/usr/lib/jvm/java-11-openjdk-amd64"
-            }
-          }
-        }
-      })
-
-      -- Setup autocompletion
       cmp.setup({
+        snippet = {
+          expand = function(args) require("luasnip").lsp_expand(args.body) end,
+        },
         sources = {
           { name = "nvim_lsp" },
           { name = "buffer" },
@@ -88,53 +63,109 @@ return {
           { name = "luasnip" },
         },
         mapping = cmp.mapping.preset.insert({
-          ["<C-j>"] = cmp.mapping.select_next_item(),
-          ["<C-k>"] = cmp.mapping.select_prev_item(),
+          ["<C-n>"] = cmp.mapping.select_next_item(),
+          ["<C-p>"] = cmp.mapping.select_prev_item(),
           ["<C-b>"] = cmp.mapping.scroll_docs(-4),
           ["<C-f>"] = cmp.mapping.scroll_docs(4),
           ["<C-Space>"] = cmp.mapping.complete(),
           ["<CR>"] = cmp.mapping.confirm({ select = false }),
-          ["<Tab>"] = cmp.mapping(function(fallback)
+          ["<C-y>"] = cmp.mapping(function(fallback)
             if cmp.visible() then
               local entry = cmp.get_selected_entry()
               if not entry then
                 cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
               end
               cmp.confirm()
+            elseif require("luasnip").expand_or_locally_jumpable() then
+              require("luasnip").expand_or_jump()
             else
               fallback()
             end
-          end, { "i", "s", "c", }),
+          end, { "i", "s", "c" }),
         }),
         window = {
           completion = cmp.config.window.bordered(),
           documentation = cmp.config.window.bordered(),
         },
-        experimental = {
-          ghost_text = false
+        experimental = { ghost_text = false },
+      })
+
+      -- cmdline completion
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
+      })
+      cmp.setup.cmdline({ "/", "?" }, {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = { { name = "buffer" } },
+      })
+
+      --------------------------------------------------------------------------
+      -- LSP Configuration (Simplified)
+      --------------------------------------------------------------------------
+      local function on_attach(client, bufnr)
+        local o = { buffer = bufnr, silent = true }
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, o)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, o)
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, o)
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, o)
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, o)
+        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, o)
+        vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, o)
+      end
+
+      -- Find Apex JAR (simplified approach)
+      local function find_apex_jar()
+        local candidates = {
+          vim.fn.stdpath("data") .. "/mason/packages/apex-language-server/extension/dist/apex-jorje-lsp.jar",
+          vim.fn.expand("$HOME/apex-jorje-lsp.jar"),
+          vim.fn.expand("~/.vscode/extensions/salesforce.salesforcedx-vscode-apex-*/extension/dist/apex-jorje-lsp.jar"),
+        }
+        
+        for _, path in ipairs(candidates) do
+          if vim.fn.filereadable(path) == 1 then
+            return path
+          end
+          -- Handle glob patterns
+          local glob_result = vim.fn.glob(path, 1, 1)
+          if type(glob_result) == "table" and #glob_result > 0 and vim.fn.filereadable(glob_result[#glob_result]) == 1 then
+            return glob_result[#glob_result]
+          end
+        end
+        return nil
+      end
+
+      local apex_jar = find_apex_jar()
+      if not apex_jar then
+        vim.notify("apex-jorje-lsp.jar not found. Install with :Mason → apex-language-server", vim.log.levels.ERROR)
+      end
+
+      -- lua_ls
+      vim.lsp.config("lua_ls", {
+        on_attach = on_attach,
+        capabilities = caps,
+        settings = { Lua = { diagnostics = { globals = { "vim" } } } }
+      })
+
+      -- apex_ls (simplified configuration)
+      vim.lsp.config("apex_ls", {
+        cmd = apex_jar and { "java", "-jar", apex_jar } or nil,
+        filetypes = { "apex" },
+        root_markers = { "sfdx-project.json", ".git" },
+        single_file_support = true,
+        on_attach = on_attach,
+        capabilities = caps,
+        settings = {
+          apex = {
+            java = { home = "/usr/lib/jvm/java-11-openjdk-amd64" },
+            apex_enable_semantic_errors = false,
+            apex_enable_completion_statistics = false,
+          },
         },
       })
 
-      -- Setup command line autocompletion
-      cmp.setup.cmdline(':', {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = cmp.config.sources(
-          {
-            { name = 'path' }
-          },
-          {
-            { name = 'cmdline' }
-          }
-        )
-      })
-
-      -- Setup search autocompletion
-      cmp.setup.cmdline({ '/', '?' }, {
-        mapping = cmp.mapping.preset.cmdline(),
-        sources = {
-          { name = 'buffer' }
-        }
-      })
+      -- Enable LSP servers
+      vim.lsp.enable({ "lua_ls", "apex_ls" })
     end,
   },
 }
