@@ -19,6 +19,16 @@ return {
             type = "action",
             opts = { nowait = true, silent = true }
           },
+          -- Open in splits
+          ["<C-h>"] = actions.select_horizontal, -- Horizontal split
+          ["<C-v'>"] = actions.select_vertical,  -- Vertical split
+          ["<C-t>"] = actions.select_tab,        -- New tab
+        },
+        n = {
+          -- Same mappings for normal mode in Telescope
+          ["<C-h>"] = actions.select_horizontal,
+          ["<C-v>"] = actions.select_vertical,
+          ["<C-t>"] = actions.select_tab,
         }
       },
     },

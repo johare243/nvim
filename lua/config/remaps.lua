@@ -19,6 +19,7 @@ m("i", "jk", "<ESC>", { desc = "Escape" })
 m("n", "<leader><leader>", "<cmd>source %<cr>", { desc = "Source current file" })
 m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
 m("n", "<leader>qb", "<cmd>q<cr>", { desc = "Close Buffer" })
+m("n", "<leader>bq!", "<cmd>q<cr>", { desc = "Close Buffer" })
 m("n", "<leader>qa", "<cmd>qall!<cr>", { desc = "Force Quit All" })
 
 -- movement QoL
@@ -34,10 +35,31 @@ m("n", "<leader>h", "<cmd>harpoon.ui.toggle_quick_menu()<cr>", { desc = "Next Bu
 -- window navigation (requested)
 m("n", "<C-h>", "<C-w>h", { desc = "Window left" })
 m("n", "<C-l>", "<C-w>l", { desc = "Window right" })
+m("n", "<C-j>", "<C-w>j", { desc = "Window down" })
+m("n", "<C-k>", "<C-w>k", { desc = "Window up" })
 
 -- explorer (nvim-tree)
 m("n", "<leader>ee", "<cmd>NvimTreeToggle<cr>", { desc = "Toggle File Explorer" })
 m("n", "<leader>ec", "<cmd>NvimTreeFindFileToggle<cr>", { desc = "Toggle Current File in File Explorer" })
+
+-- telescope
 m("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
 m("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Find Buffer" })
 m("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Grep in CWD" })
+m("n", "<leader>fw", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Find in current buffer" })
+m("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Find Help" })
+
+-- split and pick buffer with telescope
+m("n", "<leader>bv", function()
+  vim.cmd('split')
+  vim.cmd('Telescope buffers')
+end, { desc = "Split Horizontal + Pick Buffer" })
+
+m("n", "<leader>bh", function()
+  vim.cmd('vsplit')
+  vim.cmd('Telescope buffers')
+end, { desc = "Split Vertical + Pick Buffer" })
+
+-- close splits
+m("n", "<leader>so", "<C-w>o", { desc = "Close other splits (only keep current)" })
+m("n", "<leader>sx", "<cmd>close<cr>", { desc = "Close current split" })
