@@ -16,9 +16,10 @@ m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
 -- basics
 m("i", "jk", "<ESC>", { desc = "Escape" })
-m("n", "<leader><leader>", "<cmd>source %<cr>", { desc = "Source current file" })
+m("n", "<leader><CR>", "<cmd>source %<cr>", { desc = "Source current file" })
 m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
-m("n", "<leader>bq", function()
+
+m("n", "<leader>bd", function()
   -- Check if there are multiple windows
   local windows = vim.api.nvim_list_wins()
   if #windows > 1 then
@@ -29,7 +30,20 @@ m("n", "<leader>bq", function()
     vim.cmd('bdelete!')
   end
 end, { desc = "Smart Close Buffer" })
-m("n", "<leader>qa", "<cmd>qall!<cr>", { desc = "Force Quit All" })
+
+m("n", "<leader>q", function()
+  -- Check if there are multiple windows
+  local windows = vim.api.nvim_list_wins()
+  if #windows > 1 then
+    -- In a split: just close the window, keep buffer
+    vim.cmd('close')
+  else
+    -- Single window: delete the buffer
+    vim.cmd('bdelete!')
+  end
+end, { desc = "Smart Close Buffer" })
+
+m("n", "<leader>bx", "<cmd>x<cr>", { desc = "Save if modified and quit" })
 
 -- movement QoL
 m("n", "<leader>n", "<cmd>bnext<cr>", { desc = "Next Buffer" })
@@ -39,12 +53,6 @@ m("n", "<C-u>", "<C-u>zz", { desc = "Half page up (center)" })
 
 -- harpoon
 m("n", "<leader>h", "<cmd>harpoon.ui.toggle_quick_menu()<cr>", { desc = "Next Buffer" })
-
--- window navigation (requested)
-m("n", "<C-h>", "<C-w>h", { desc = "Window left" })
-m("n", "<C-l>", "<C-w>l", { desc = "Window right" })
-m("n", "<C-j>", "<C-w>j", { desc = "Window down" })
-m("n", "<C-k>", "<C-w>k", { desc = "Window up" })
 
 -- explorer (nvim-tree)
 m("n", "<leader>e", "<cmd>NvimTreeFindFileToggle<cr>", { desc = "Toggle Current File in File Explorer" })
@@ -71,7 +79,7 @@ m("n", "<leader>bh", function()
       table.insert(valid_buffers, buf)
     end
   end
-  
+
   if #valid_buffers <= 1 then
     -- Use Telescope find_files with vertical split action
     require('telescope.builtin').find_files({
@@ -98,4 +106,3 @@ m("n", "<leader>bh", function()
     })
   end
 end, { desc = "Pick File/Buffer for Vertical Split" })
-

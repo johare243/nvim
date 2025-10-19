@@ -3,7 +3,6 @@ return {
     "neovim/nvim-lspconfig",
     event = { "BufReadPre", "BufNewFile", "BufReadPost" },
 
-    -- ensure .cls/.trigger => apex BEFORE the first buffer opens
     init = function()
       vim.filetype.add({ extension = { cls = "apex", trigger = "apex" } })
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
@@ -29,6 +28,18 @@ return {
 
     config = function()
       -- mason / fidget
+      vim.diagnostic.config({
+        virtual_text = true,
+        signs = true,
+        underline = true,
+        update_in_insert = false,
+        severity_sort = true,
+      })
+
+      vim.lsp.handlers["textDocument/hover"] =
+          vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+      vim.lsp.handlers["textDocument/signatureHelp"] =
+          vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
       require("mason").setup()
       require("mason-lspconfig").setup({ automatic_installation = true })
       require("fidget").setup({})
@@ -92,7 +103,11 @@ return {
 
       -- cmdline completion
       cmp.setup.cmdline(":", {
-        mapping = cmp.mapping.preset.cmdline(),
+        completion = { autocomplete = false },
+        mapping = cmp.mapping.preset.cmdline({
+          ["<C-n>"] = cmp.mapping.complete(),
+          ["<C-y>"] = cmp.mapping.confirm({ select = false }),
+        }),
         sources = cmp.config.sources({ { name = "path" } }, { { name = "cmdline" } }),
       })
       cmp.setup.cmdline({ "/", "?" }, {
@@ -103,6 +118,7 @@ return {
       --------------------------------------------------------------------------
       -- LSP Configuration (Simplified)
       --------------------------------------------------------------------------
+
       local function on_attach(client, bufnr)
         local o = { buffer = bufnr, silent = true }
         vim.keymap.set("n", "gd", vim.lsp.buf.definition, o)
@@ -114,14 +130,14 @@ return {
         vim.keymap.set("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, o)
       end
 
-      -- Find Apex JAR (simplified approach)
+      -- Find Apex JAR
       local function find_apex_jar()
         local candidates = {
           vim.fn.stdpath("data") .. "/mason/packages/apex-language-server/extension/dist/apex-jorje-lsp.jar",
           vim.fn.expand("$HOME/apex-jorje-lsp.jar"),
           vim.fn.expand("~/.vscode/extensions/salesforce.salesforcedx-vscode-apex-*/extension/dist/apex-jorje-lsp.jar"),
         }
-        
+
         for _, path in ipairs(candidates) do
           if vim.fn.filereadable(path) == 1 then
             return path
@@ -147,10 +163,10 @@ return {
         settings = { Lua = { diagnostics = { globals = { "vim" } } } }
       })
 
-      -- apex_ls (simplified configuration)
+      -- apex_ls
       vim.lsp.config("apex_ls", {
         cmd = apex_jar and { "java", "-jar", apex_jar } or nil,
-        filetypes = { "apex" },
+        filetypes = { "apex", "apexcode", "soql", "sosl" },
         root_markers = { "sfdx-project.json", ".git" },
         single_file_support = true,
         on_attach = on_attach,
@@ -165,7 +181,7 @@ return {
       })
 
       -- Enable LSP servers
-      vim.lsp.enable({ "lua_ls", "apex_ls" })
+      vim.lsp.enable({ "lua_ls", "apex_ls", })
     end,
   },
 }
