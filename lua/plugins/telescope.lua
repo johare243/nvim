@@ -19,6 +19,11 @@ return {
             type = "action",
             opts = { nowait = true, silent = true }
           },
+          ["<ESC>"] = {
+            actions.close,
+            type = "action",
+            opts = { nowait = true, silent = true }
+          },
           -- Open in splits
           ["<C-h>"] = actions.select_horizontal, -- Horizontal split
           ["<C-v'>"] = actions.select_vertical,  -- Vertical split

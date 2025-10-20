@@ -3,9 +3,8 @@ vim.g.maplocalleader = " "
 
 local m = vim.keymap.set
 
--- special
-m("v", "J", ":m '>+1<CR>gv=gv")
-m("v", "K", ":m '<-2<CR>gv=gv")
+m("v", "<C-j>", ":m '>+1<CR>gv=gv")
+m("v", "<C-k>", ":m '<-2<CR>gv=gv")
 m("x", "<leader>p", [["_dP]])
 
 
@@ -15,6 +14,7 @@ m("i", "<Right>", "{")
 m("i", "<Up>", "}")
 m("i", "<Down>", ")")
 
+-- special
 -- yank to clipboard
 m({ "n", "v" }, "<leader>y", [["+y]])
 m("n", "<leader>Y", [["+Y]])
