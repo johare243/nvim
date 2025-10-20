@@ -16,6 +16,12 @@ return {
           quit_on_open = true,
         },
       },
+      filters = {
+        dotfiles = false,
+        git_clean = false,
+        no_buffer = false,
+        custom = {},
+      },
     }
   end,
 }

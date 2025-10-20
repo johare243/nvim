@@ -7,17 +7,49 @@ local m = vim.keymap.set
 m("v", "J", ":m '>+1<CR>gv=gv")
 m("v", "K", ":m '<-2<CR>gv=gv")
 m("x", "<leader>p", [["_dP]])
+
+
+-- parens for adv360
+m("i", "<Left>", "(")
+m("i", "<Right>", "{")
+m("i", "<Up>", "}")
+m("i", "<Down>", ")")
+
+-- yank to clipboard
 m({ "n", "v" }, "<leader>y", [["+y]])
 m("n", "<leader>Y", [["+Y]])
-m({ "n", "v" }, "<leader>d", [["_d]])
-m("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
-m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 
+-- delete to null register
+m({ "n", "v" }, "<leader>d", [["_d]])
+
+-- tmux commands
+m("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 -- basics
-m("i", "jk", "<ESC>", { desc = "Escape" })
-m("n", "<leader><CR>", "<cmd>source %<cr>", { desc = "Source current file" })
+m("i", "jk", "<ESC>", { desc = "Escape" }) -- I never use this but maybe one day
+m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+m("n", "<leader><CR>", "<cmd>source %<cr><cmd>lua print('source %')<CR>", { desc = "Source current file" })
 m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
+
+
+--
+-- FUNCTIONS
+--
+-- add ; to the end of the line
+m("n", "<leader>a", function()
+  --local line = vim.fn.getline(.)
+  --local last_char = string.sub(line, -1)
+  local last_char = vim.fn.getline('.'):sub(-1)
+  print(last_char)
+
+  if last_char == ';' then
+    return ''
+  else
+    return 'A;<Esc>'
+  end
+end, { expr = true, desc = "Add semicolon to end of line if not already there" });
+
+
 
 m("n", "<leader>bd", function()
   -- Check if there are multiple windows
@@ -46,8 +78,8 @@ end, { desc = "Smart Close Buffer" })
 m("n", "<leader>bx", "<cmd>x<cr>", { desc = "Save if modified and quit" })
 
 -- movement QoL
-m("n", "<leader>n", "<cmd>bnext<cr>", { desc = "Next Buffer" })
-m("n", "<leader>p", "<<cmd>bprev<cr>", { desc = "Previous Buffer" })
+m("n", "<leader>bn", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+m("n", "<leader>bp", "<<cmd>bprev<cr>", { desc = "Previous Buffer" })
 m("n", "<C-d>", "<C-d>zz", { desc = "Half page down (center)" })
 m("n", "<C-u>", "<C-u>zz", { desc = "Half page up (center)" })
 
@@ -59,6 +91,7 @@ m("n", "<leader>e", "<cmd>NvimTreeFindFileToggle<cr>", { desc = "Toggle Current 
 
 -- telescope
 m("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
+m("n", "<leader>fj", "<cmd>Telescope find_files<cr>", { desc = "Find Files" })
 m("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Find Buffer" })
 m("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Grep in CWD" })
 m("n", "<leader>fw", "<cmd>Telescope current_buffer_fuzzy_find<cr>", { desc = "Find in current buffer" })

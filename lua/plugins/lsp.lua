@@ -6,7 +6,7 @@ return {
     init = function()
       vim.filetype.add({ extension = { cls = "apex", trigger = "apex" } })
       vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-        pattern = { "*.cls", "*.trigger", "*.apex" },
+        pattern = { "*.cls", "*.trigger", "*.apex", },
         callback = function()
           if vim.bo.filetype == "" then vim.bo.filetype = "apex" end
         end,
