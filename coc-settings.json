@@ -1,0 +1,6 @@
+{
+  "coc.preferences.filetypeMap": {
+    "apex": "apexcode"
+  },
+  "diagnostic.virtualText": true
+}

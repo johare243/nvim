@@ -23,7 +23,7 @@ m("n", "<leader>Y", [["+Y]])
 m({ "n", "v" }, "<leader>d", [["_d]])
 
 -- tmux commands
-m("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+m("n", "<C-p>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
 
 -- basics
 m("i", "jk", "<ESC>", { desc = "Escape" }) -- I never use this but maybe one day
