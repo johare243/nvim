@@ -1,0 +1,152 @@
+{
+  "Apex Class": {
+    "prefix": "class",
+    "body": [
+      "public class ${1:ClassName} {",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a new Apex class"
+  },
+  "Apex Trigger": {
+    "prefix": "trigger",
+    "body": [
+      "trigger ${1:TriggerName} on ${2:ObjectName} (${3:before insert, before update, before delete, after insert, after update, after delete, after undelete}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a new Apex trigger"
+  },
+  "Test Class": {
+    "prefix": "testclass",
+    "body": [
+      "@isTest",
+      "public class ${1:TestClassName} {",
+      "    @isTest",
+      "    static void test${2:MethodName}() {",
+      "        // Test data setup",
+      "        $0",
+      "        ",
+      "        // Test execution",
+      "        ",
+      "        // Assertions",
+      "        System.assert(true, 'Test should pass');",
+      "    }",
+      "}"
+    ],
+    "description": "Create a test class with test method"
+  },
+  "SOQL Query": {
+    "prefix": "soql",
+    "body": [
+      "List<${1:ObjectName}> ${2:records} = [SELECT ${3:Id, Name} FROM ${1:ObjectName} WHERE ${4:condition}];"
+    ],
+    "description": "Create a SOQL query"
+  },
+  "System Debug": {
+    "prefix": "debug",
+    "body": [
+      "System.debug('${1:message}');"
+    ],
+    "description": "Add debug statement"
+  },
+  "System Assert": {
+    "prefix": "assert",
+    "body": [
+      "System.assert(${1:condition}, '${2:message}');"
+    ],
+    "description": "Add assertion"
+  },
+  "Try Catch": {
+    "prefix": "try",
+    "body": [
+      "try {",
+      "    $1",
+      "} catch (Exception e) {",
+      "    System.debug('Error: ' + e.getMessage());",
+      "    $0",
+      "}"
+    ],
+    "description": "Try-catch block"
+  },
+  "For Loop": {
+    "prefix": "for",
+    "body": [
+      "for (${1:Integer} i = 0; i < ${2:list}.size(); i++) {",
+      "    $0",
+      "}"
+    ],
+    "description": "For loop"
+  },
+  "Enhanced For Loop": {
+    "prefix": "foreach",
+    "body": [
+      "for (${1:ObjectType} ${2:item} : ${3:collection}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Enhanced for loop"
+  },
+  "If Statement": {
+    "prefix": "if",
+    "body": [
+      "if (${1:condition}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "If statement"
+  },
+  "Method": {
+    "prefix": "method",
+    "body": [
+      "public ${1:void} ${2:methodName}(${3:parameters}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a method"
+  },
+  "Static Method": {
+    "prefix": "static",
+    "body": [
+      "public static ${1:void} ${2:methodName}(${3:parameters}) {",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a static method"
+  },
+  "Math.abs": {
+    "prefix": "abs",
+    "body": [
+      "Math.abs(${1:number})"
+    ],
+    "description": "Math.abs() - absolute value"
+  },
+  "Math.max": {
+    "prefix": "max",
+    "body": [
+      "Math.max(${1:number1}, ${2:number2})"
+    ],
+    "description": "Math.max() - maximum value"
+  },
+  "Math.min": {
+    "prefix": "min",
+    "body": [
+      "Math.min(${1:number1}, ${2:number2})"
+    ],
+    "description": "Math.min() - minimum value"
+  },
+  "Math.round": {
+    "prefix": "round",
+    "body": [
+      "Math.round(${1:number})"
+    ],
+    "description": "Math.round() - round to nearest integer"
+  },
+  "Math.random": {
+    "prefix": "random",
+    "body": [
+      "Math.random()"
+    ],
+    "description": "Math.random() - random number"
+  }
+}

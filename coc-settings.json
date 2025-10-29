@@ -1,0 +1,23 @@
+{
+  "languageserver": {
+    "apex": {
+      "command": "java",
+      "args": [
+        "-cp",
+        "/home/pc/.config/coc/extensions/node_modules/coc-apex/apex-lsp/apex-jorje-lsp.jar",
+        "apex.jorje.lsp.ApexLanguageServerLauncher"
+      ],
+      "filetypes": ["apex", "apexcode", "trigger"],
+      "trace.server": "verbose",
+      "settings": {
+        "apex": {
+          "enable-semantic-errors": false,
+          "enable-completion-statistics": false
+        }
+      }
+    }
+  },
+  "coc.preferences.formatOnSaveFiletypes": ["apex", "apexcode", "trigger"],
+  "prettier.enable": true,
+  "snippets.enable": true
+}
