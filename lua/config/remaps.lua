@@ -7,7 +7,6 @@ m("v", "<C-j>", ":m '>+1<CR>gv=gv")
 m("v", "<C-k>", ":m '<-2<CR>gv=gv")
 m("x", "<leader>p", [["_dP]])
 
-
 -- parens for adv360
 m("i", "<Left>", "(")
 m("i", "<Right>", "{")
@@ -31,48 +30,46 @@ m("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 m("n", "<leader><CR>", "<cmd>source %<cr><cmd>lua print('source %')<CR>", { desc = "Source current file" })
 m("n", "<leader>w", "<cmd>w<cr>", { desc = "Save" })
 
-
 --
 -- FUNCTIONS
 --
 -- add ; to the end of the line
 m("n", "<leader>a", function()
-  --local line = vim.fn.getline(.)
-  --local last_char = string.sub(line, -1)
-  local last_char = vim.fn.getline('.'):sub(-1)
-  print(last_char)
+	--local line = vim.fn.getline(.)
+	--local last_char = string.sub(line, -1)
+	local last_char = vim.fn.getline("."):sub(-1)
+	print(last_char)
 
-  if last_char == ';' then
-    return ''
-  else
-    return 'A;<Esc>'
-  end
-end, { expr = true, desc = "Add semicolon to end of line if not already there" });
-
-
+	if last_char == ";" then
+		return ""
+	else
+		return "A;<Esc>"
+	end
+end, { expr = true, desc = "Add semicolon to end of line if not already there" })
 
 m("n", "<leader>bd", function()
-  -- Check if there are multiple windows
-  local windows = vim.api.nvim_list_wins()
-  if #windows > 1 then
-    -- In a split: just close the window, keep buffer
-    vim.cmd('close')
-  else
-    -- Single window: delete the buffer
-    vim.cmd('bdelete!')
-  end
+	-- Check if there are multiple windows
+	local windows = vim.api.nvim_list_wins()
+	if #windows > 1 then
+		-- In a split: just close the window, keep buffer
+		vim.cmd("close")
+	else
+		-- Single window: delete the buffer
+		vim.cmd("bdelete!")
+	end
 end, { desc = "Smart Close Buffer" })
 
 m("n", "<leader>q", function()
-  -- Check if there are multiple windows
-  local windows = vim.api.nvim_list_wins()
-  if #windows > 1 then
-    -- In a split: just close the window, keep buffer
-    vim.cmd('close')
-  else
-    -- Single window: delete the buffer
-    vim.cmd('bdelete!')
-  end
+	-- Check if there are multiple windows
+	local windows = vim.api.nvim_list_wins()
+	if #windows > 1 then
+		-- In a split: just close the window, keep buffer
+		vim.cmd("close")
+	else
+		-- Single window: delete the buffer
+		vim.cmd("bdelete!")
+	end
+>>>>>>> c50ba82 (init)
 end, { desc = "Smart Close Buffer" })
 
 m("n", "<leader>bx", "<cmd>x<cr>", { desc = "Save if modified and quit" })
@@ -99,43 +96,43 @@ m("n", "<leader>fh", "<cmd>Telescope help_tags<cr>", { desc = "Find Help" })
 
 -- split and pick buffer with telescope
 m("n", "<leader>bv", function()
-  vim.cmd('split')
-  vim.cmd('Telescope buffers')
+	vim.cmd("split")
+	vim.cmd("Telescope buffers")
 end, { desc = "Split Horizontal + Pick Buffer" })
 
 m("n", "<leader>bh", function()
-  -- Check if there's only one buffer (current buffer)
-  local buffers = vim.api.nvim_list_bufs()
-  local valid_buffers = {}
-  for _, buf in ipairs(buffers) do
-    if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-      table.insert(valid_buffers, buf)
-    end
-  end
+	-- Check if there's only one buffer (current buffer)
+	local buffers = vim.api.nvim_list_bufs()
+	local valid_buffers = {}
+	for _, buf in ipairs(buffers) do
+		if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+			table.insert(valid_buffers, buf)
+		end
+	end
 
-  if #valid_buffers <= 1 then
-    -- Use Telescope find_files with vertical split action
-    require('telescope.builtin').find_files({
-      attach_mappings = function(prompt_bufnr, map)
-        local actions = require('telescope.actions')
-        -- Override Enter to always open in vertical split
-        map('i', '<CR>', function()
-          actions.select_vertical(prompt_bufnr)
-        end)
-        return true
-      end,
-    })
-  else
-    -- Use Telescope buffers with vertical split action
-    require('telescope.builtin').buffers({
-      attach_mappings = function(prompt_bufnr, map)
-        local actions = require('telescope.actions')
-        -- Override Enter to always open in vertical split
-        map('i', '<CR>', function()
-          actions.select_vertical(prompt_bufnr)
-        end)
-        return true
-      end,
-    })
-  end
+	if #valid_buffers <= 1 then
+		-- Use Telescope find_files with vertical split action
+		require("telescope.builtin").find_files({
+			attach_mappings = function(prompt_bufnr, map)
+				local actions = require("telescope.actions")
+				-- Override Enter to always open in vertical split
+				map("i", "<CR>", function()
+					actions.select_vertical(prompt_bufnr)
+				end)
+				return true
+			end,
+		})
+	else
+		-- Use Telescope buffers with vertical split action
+		require("telescope.builtin").buffers({
+			attach_mappings = function(prompt_bufnr, map)
+				local actions = require("telescope.actions")
+				-- Override Enter to always open in vertical split
+				map("i", "<CR>", function()
+					actions.select_vertical(prompt_bufnr)
+				end)
+				return true
+			end,
+		})
+	end
 end, { desc = "Pick File/Buffer for Vertical Split" })

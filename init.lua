@@ -3,7 +3,6 @@ require("config.remaps")
 require("config.filetypes")
 require("config.lazy")
 require("lualine").setup()
-
 vim.api.nvim_create_autocmd('TextYankPost', {
   group = vim.api.nvim_create_augroup('highlight_yank', {}),
   desc = 'Hightlight selection on yank',
