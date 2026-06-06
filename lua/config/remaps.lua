@@ -69,7 +69,6 @@ m("n", "<leader>q", function()
 		-- Single window: delete the buffer
 		vim.cmd("bdelete!")
 	end
->>>>>>> c50ba82 (init)
 end, { desc = "Smart Close Buffer" })
 
 m("n", "<leader>bx", "<cmd>x<cr>", { desc = "Save if modified and quit" })
